@@ -10,8 +10,11 @@ Write your code in this editor and press "Run" button to compile and execute it.
   Projeto Final - Laboratório de Programação
   Tema: Gerador de Senhas Aleatórias
 
-  Objetivo:
+  Objetivo Geral:
   Gerar senhas aleatórias utilizando strings e funções.
+
+  problematização: O que é ou nao uma senha segura
+  Resoluçao: O que fazer para deixar mais forte
 
   Funcionalidades:
   - Escolher tamanho da senha
@@ -20,7 +23,7 @@ Write your code in this editor and press "Run" button to compile and execute it.
   - Verificar força da senha
   - Salvar senha em arquivo texto
 
-  Autor: Ana Thereza Naback
+  Autores: Ana Thereza Naback e Rafael 
 ******************************************************************************/
 
 /* Bibliotecas utilizadas */
@@ -30,10 +33,12 @@ Write your code in this editor and press "Run" button to compile and execute it.
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
+//#include <secp256k1.h>
+#include "verificatamanho.c"
 
 #define TAM_MAX 100
 
-/* void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb)
+	/* void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb)
 
   Entradas:
     caracteres: Vetor que armazenará os caracteres permitidos
@@ -208,13 +213,8 @@ int main() {
   printf("Digite quantos caracteres a senha deve ter: ");
   scanf("%d", &tamanho);
 
-  /* Verifica tamanho válido */
-  while(tamanho < 8 || tamanho >= TAM_MAX) {
-
-    printf("Tamanho invalido.\n");
-    printf("Digite um valor entre 8 e 99: ");
-    scanf("%d", &tamanho);
-  }
+  verificarTamanho(&tamanho);
+/*Tamanho   /* Verifica tamanho válido 
 
   printf("\nDigite 1 para SIM ou 0 para NAO.\n");
 
