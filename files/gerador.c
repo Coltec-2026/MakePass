@@ -19,178 +19,33 @@
 
 #define TAM_MAX 100
 
+// importadas
+int verificarTamanho(int tamanho_valido);
+int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);	
+// locais
+void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb);
+void GeraSenha(char senha[], int tamanho, char caracteres[]);
+int VerificaSenhaForte(char senha[]);
+void SalvaArquivo(char senha[]);
 
-	int verificarTamanho(int tamanho_valido);
-int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);
-/*
-  Entradas:
-    caracteres: Vetor que armazenará os caracteres permitidos
-    mai: Define uso de letras maiúsculas
-    min: Define uso de letras minúsculas
-    num: Define uso de números
-    simb: Define uso de símbolos
-
-  Saída:
-    Vetor caracteres preenchido
-*/
-void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb) {
-
-  strcpy(caracteres, "");
-
-  if(mai == 1) {
-    strcat(caracteres, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  }
-
-  if(min == 1) {
-    strcat(caracteres, "abcdefghijklmnopqrstuvwxyz");
-  }
-
-  if(num == 1) {
-    strcat(caracteres, "0123456789");
-  }
-
-  if(simb == 1) {
-    strcat(caracteres, "!@#$%&*?");
-  }
-}
-
-/* void GeraSenha(char senha[], int tamanho, char caracteres[])
-
-  Entradas:
-    senha: Vetor que armazenará a senha
-    tamanho: Quantidade de caracteres da senha
-    caracteres: Vetor contendo os caracteres permitidos
-
-  Saída:
-    Senha aleatória gerada
-*/
-void GeraSenha(char senha[], int tamanho, char caracteres[]) {
-
-  int i;
-  int tamCaracteres;
-
-  char mai[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  char min[] = "abcdefghijklmnopqrstuvwxyz";
-  char num[] = "0123456789";
-  char simb[] = "!@#$%&*?";
-
-  tamCaracteres = strlen(caracteres);
-
-  /* Garantia de senha forte */
-  senha[0] = mai[rand() % strlen(mai)];
-  senha[1] = min[rand() % strlen(min)];
-  senha[2] = num[rand() % strlen(num)];
-  senha[3] = simb[rand() % strlen(simb)];
-
-  /* Completa o restante da senha */
-  for(i = 4; i < tamanho; i++) {
-
-    int posicao;
-
-    posicao = rand() % tamCaracteres;
-
-    senha[i] = caracteres[posicao];
-  }
-
-  senha[tamanho] = '\0';
-}
-
-/* int VerificaSenhaForte(char senha[])
-
-  Entrada:
-    senha: Senha gerada
-
-  Saídas:
-    0: Senha fraca
-    1: Senha forte
-*/
-int VerificaSenhaForte(char senha[]) {
-
-  int i;
-
-  int maiuscula = 0;
-  int minuscula = 0;
-  int numero = 0;
-  int simbolo = 0;
-
-  if(strlen(senha) < 8) {
-    return 0;
-  }
-
-  for(i = 0; senha[i] != '\0'; i++) {
-
-    if(isupper(senha[i])) {
-      maiuscula = 1;
-    }
-
-    else if(islower(senha[i])) {
-      minuscula = 1;
-    }
-
-    else if(isdigit(senha[i])) {
-      numero = 1;
-    }
-
-    else {
-      simbolo = 1;
-    }
-  }
-
-  if(maiuscula && minuscula && numero && simbolo) {
-    return 1;
-  }
-
-  return 0;
-}
-
-/* void SalvaArquivo(char senha[])
-
-  Entrada:
-    senha: Senha gerada
-
-  Saída:
-    Arquivo texto contendo a senha
-*/
-void SalvaArquivo(char senha[]) {
-
-  FILE *arquivo;
-
-  arquivo = fopen("senhas.txt", "a");
-
-  if(arquivo == NULL) {
-
-    printf("Erro ao abrir o arquivo.\n");
-    return;
-  }
-
-  fprintf(arquivo, "Senha Gerada: %s\n", senha);
-
-  fclose(arquivo);
-
-  printf("Senha salva no arquivo com sucesso.\n");
-}
-
-/* Função Principal */
 int main() {
-
+  
+  // variaveis prenchidas pelo usuario que não são inicializadas podem gerar erro de comportamento.	
   int tamanho = 0;
   int usarMai, usarMin, usarNum, usarSimb, salvar;
-  // colocar variaveis que serão preenchidas pelo usuário não inicializadas faz com que existam possíveis erros de comportamento associados ao tratamento de variaveis no código. 
   char caracteres[TAM_MAX];
   char senha[TAM_MAX];
 
   /* Inicialização da função rand */
   srand(time(NULL));
 
-  printf("====================================\n");
-  printf("   GERADOR DE SENHAS ALEATORIAS\n");
-  printf("====================================\n");
+  printf("====================================\n   GERADOR DE SENHAS ALEATORIAS\n ====================================\n");
 
   /* Tamanho da senha */
  tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");
 
-tamanho = verificarTamanho(tamanho);
 /* Verifica tamanho válido */ 
+tamanho = verificarTamanho(tamanho);
 
   printf("\nDigite 1 para SIM ou 0 para NAO.\n");
 
@@ -264,4 +119,113 @@ tamanho = verificarTamanho(tamanho);
   printf("\nPrograma Finalizado.\n");
 
   return 0;
+
+}
+
+void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb) {
+
+  strcpy(caracteres, "");
+
+  if(mai == 1) {
+    strcat(caracteres, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  }
+
+  if(min == 1) {
+    strcat(caracteres, "abcdefghijklmnopqrstuvwxyz");
+  }
+
+  if(num == 1) {
+    strcat(caracteres, "0123456789");
+  }
+
+  if(simb == 1) {
+    strcat(caracteres, "!@#$%&*?");
+  }
+}
+void GeraSenha(char senha[], int tamanho, char caracteres[]) {
+
+  int i;
+  int tamCaracteres;
+
+  char mai[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  char min[] = "abcdefghijklmnopqrstuvwxyz";
+  char num[] = "0123456789";
+  char simb[] = "!@#$%&*?";
+
+  tamCaracteres = strlen(caracteres);
+
+  /* Garantia de senha forte */
+  senha[0] = mai[rand() % strlen(mai)];
+  senha[1] = min[rand() % strlen(min)];
+  senha[2] = num[rand() % strlen(num)];
+  senha[3] = simb[rand() % strlen(simb)];
+
+  /* Completa o restante da senha */
+  for(i = 4; i < tamanho; i++) {
+
+    int posicao;
+
+    posicao = rand() % tamCaracteres;
+
+    senha[i] = caracteres[posicao];
+  }
+
+  senha[tamanho] = '\0';
+}
+
+int VerificaSenhaForte(char senha[]) {
+
+  int i;
+
+  int maiuscula = 0;
+  int minuscula = 0;
+  int numero = 0;
+  int simbolo = 0;
+
+  if(strlen(senha) < 8) {
+    return 0;
+  }
+
+  for(i = 0; senha[i] != '\0'; i++) {
+
+    if(isupper(senha[i])) {
+      maiuscula = 1;
+    }
+
+    else if(islower(senha[i])) {
+      minuscula = 1;
+    }
+
+    else if(isdigit(senha[i])) {
+      numero = 1;
+    }
+
+    else {
+      simbolo = 1;
+    }
+  }
+
+  if(maiuscula && minuscula && numero && simbolo) {
+    return 1;
+  }
+
+  return 0;
+}
+void SalvaArquivo(char senha[]) {
+
+  FILE *arquivo;
+
+  arquivo = fopen("senhas.txt", "a");
+
+  if(arquivo == NULL) {
+
+    printf("Erro ao abrir o arquivo.\n");
+    return;
+  }
+
+  fprintf(arquivo, "Senha Gerada: %s\n", senha);
+
+  fclose(arquivo);
+
+  printf("Senha salva no arquivo com sucesso.\n");
 }
