@@ -1,30 +1,11 @@
 /******************************************************************************
-
-                            Online C Compiler.
-                Code, Compile, Run and Debug C program online.
-Write your code in this editor and press "Run" button to compile and execute it.
-
-*******************************************************************************/
-
-/******************************************************************************
-  Projeto Final - Laboratório de Programação
   Tema: Gerador de Senhas Aleatórias
-
-  Objetivo Geral:
-  Gerar senhas aleatórias utilizando strings e funções.
-
-  problematização: O que é ou nao uma senha segura
-  Resoluçao: O que fazer para deixar mais forte
-
   Funcionalidades:
   - Escolher tamanho da senha
   - Escolher tipos de caracteres
   - Gerar senha aleatória
   - Verificar força da senha
   - Salvar senha em arquivo texto
-
-  Autores: Ana Thereza Naback e Rafael 
-******************************************************************************/
 
 /* Bibliotecas utilizadas */
 
@@ -190,15 +171,9 @@ void SalvaArquivo(char senha[]) {
 /* Função Principal */
 int main() {
 
-  int tamanho;
-
-  int usarMai;
-  int usarMin;
-  int usarNum;
-  int usarSimb;
-
-  int salvar;
-
+  int tamanho = 0;
+  int usarMai, usarMin, usarNum, usarSimb, salvar, buff;
+  // colocar variaveis que serão preenchidas pelo usuário não inicializadas faz com que existam possíveis erros de comportamento associados ao tratamento de variaveis no código. 
   char caracteres[TAM_MAX];
   char senha[TAM_MAX];
 
@@ -210,8 +185,13 @@ int main() {
   printf("====================================\n");
 
   /* Tamanho da senha */
-  printf("Digite quantos caracteres a senha deve ter: ");
-  scanf("%d", &tamanho);
+ printf("Digite quantos caracteres a senha deve ter: ");
+ while( scanf("%d", &tamanho) != 1){ // verifica o retorno de scanf, se diferente de número, executa função.	
+	printf( "Erro: Voce não digitou um número válido! \n Digite novamente: ");
+	while ((buff = getchar()) != '\n' && buff != EOF);	
+	//o segundo while faz a limpeza de buffer, a cada caractere capturado  por getchar e limpo que seja diferente do fim do arquivo 
+  	}
+  
 
   verificarTamanho(&tamanho);
 /*Tamanho   /* Verifica tamanho válido 
