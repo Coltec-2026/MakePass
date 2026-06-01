@@ -193,8 +193,8 @@ int main() {
   	}
   
 
-  verificarTamanho(&tamanho);
-/*Tamanho   /* Verifica tamanho válido 
+  tamanho = verificarTamanho(tamanho);
+/*Tamanho   /* Verifica tamanho válido */ 
 
   printf("\nDigite 1 para SIM ou 0 para NAO.\n");
 
