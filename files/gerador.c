@@ -15,12 +15,13 @@
 #include <time.h>
 #include <ctype.h>
 //#include <secp256k1.h>
-#include "verificatamanho.c"
+
 
 #define TAM_MAX 100
 
-	/* void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb)
 
+int verificarTamanho(int tamanho_valido);
+/*
   Entradas:
     caracteres: Vetor que armazenará os caracteres permitidos
     mai: Define uso de letras maiúsculas

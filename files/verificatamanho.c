@@ -1,8 +1,3 @@
- 
-#ifndef VERIFICATAMANH_H
-#define VERIFICATAMANHO_H
-
-
 #include <stdio.h>
 
 #define TAM_MAX 100
@@ -16,4 +11,3 @@
   }
   return tamanho_valido;
   }
-  #endif
