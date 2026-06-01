@@ -21,6 +21,21 @@
 
 
 int verificarTamanho(int tamanho_valido);
+int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err){
+	int buff, valor_digitado;
+	
+	printf("%s", mensagem_inicial);
+	while (scanf("%d", &valor_digitado) != 1){ // verifica o retorno de scanf, se diferente de número, executa o laço.	
+
+		printf("%s", mensagem_err);
+		
+		
+		while((buff = getchar()) != '\n' && buff != EOF); // limpa o buffer do teclaco
+	}
+		while((buff = getchar()) != '\n' && buff != EOF); // limpa o enter da digitação
+
+return valor_digitado;
+	}
 /*
   Entradas:
     caracteres: Vetor que armazenará os caracteres permitidos
@@ -173,7 +188,7 @@ void SalvaArquivo(char senha[]) {
 int main() {
 
   int tamanho = 0;
-  int usarMai, usarMin, usarNum, usarSimb, salvar, buff;
+  int usarMai, usarMin, usarNum, usarSimb, salvar;
   // colocar variaveis que serão preenchidas pelo usuário não inicializadas faz com que existam possíveis erros de comportamento associados ao tratamento de variaveis no código. 
   char caracteres[TAM_MAX];
   char senha[TAM_MAX];
@@ -186,15 +201,9 @@ int main() {
   printf("====================================\n");
 
   /* Tamanho da senha */
- printf("Digite quantos caracteres a senha deve ter: ");
- while( scanf("%d", &tamanho) != 1){ // verifica o retorno de scanf, se diferente de número, executa função.	
-	printf( "Erro: Voce não digitou um número válido! \n Digite novamente: ");
-	while ((buff = getchar()) != '\n' && buff != EOF);	
-	//o segundo while faz a limpeza de buffer, a cada caractere capturado  por getchar e limpo que seja diferente do fim do arquivo 
-  	}
-  
+ tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");
 
-  tamanho = verificarTamanho(tamanho);
+tamanho = verificarTamanho(tamanho);
 /*Tamanho   /* Verifica tamanho válido */ 
 
   printf("\nDigite 1 para SIM ou 0 para NAO.\n");
