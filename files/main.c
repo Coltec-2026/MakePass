@@ -11,11 +11,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
-#include <ctype.h>
 //#include <secp256k1.h>
-
+#include <string.h>
 
 #define TAM_MAX 100
 
@@ -61,8 +59,7 @@ usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
 }while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
 
       /* Monta vetor de caracteres */
-  MontaCaracteres(caracteres, usarMai,
-                  usarMin, usarNum, usarSimb);
+  MontaCaracteres(caracteres, usarMai,usarMin, usarNum, usarSimb);
 
   /* Gera senha */
   GeraSenha(senha, tamanho, caracteres);
@@ -152,44 +149,6 @@ void GeraSenha(char senha[], int tamanho, char caracteres[]) {
   senha[tamanho] = '\0';
 }
 
-int VerificaSenhaForte(char senha[]) {
-
-  int i;
-
-  int maiuscula = 0;
-  int minuscula = 0;
-  int numero = 0;
-  int simbolo = 0;
-
-  if(strlen(senha) < 8) {
-    return 0;
-  }
-
-  for(i = 0; senha[i] != '\0'; i++) {
-
-    if(isupper(senha[i])) {
-      maiuscula = 1;
-    }
-
-    else if(islower(senha[i])) {
-      minuscula = 1;
-    }
-
-    else if(isdigit(senha[i])) {
-      numero = 1;
-    }
-
-    else {
-      simbolo = 1;
-    }
-  }
-
-  if(maiuscula && minuscula && numero && simbolo) {
-    return 1;
-  }
-
-  return 0;
-}
 void SalvaArquivo(char senha[]) {
 
   FILE *arquivo;
