@@ -50,38 +50,17 @@ tamanho = verificarTamanho(tamanho);
   printf("\nDigite 1 para SIM ou 0 para NAO.\n");
 
   /* Escolha dos caracteres */
-  printf("Usar letras maiusculas? ");
-  scanf("%d", &usarMai);
+do{
+usarMai = verificarDigitacao("Usar letras maiusculas? ", "Erro, digite novamente: " );  
 
-  printf("Usar letras minusculas? ");
-  scanf("%d", &usarMin);
+usarMin = verificarDigitacao("Usar letras minusculas? ", "Erro, digite novamente: ");
 
-  printf("Usar numeros? ");
-  scanf("%d", &usarNum);
+usarNum = verificarDigitacao("Usar numeros? ", "Erro, digite novamente: ");
 
-  printf("Usar simbolos? ");
-  scanf("%d", &usarSimb);
+usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: "); 
+}while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
 
-  /* Verifica se pelo menos uma opcao foi escolhida */
-  while(usarMai == 0 && usarMin == 0 &&
-        usarNum == 0 && usarSimb == 0) {
-
-    printf("\nEscolha pelo menos um tipo de caractere.\n");
-
-    printf("Usar letras maiusculas? ");
-    scanf("%d", &usarMai);
-
-    printf("Usar letras minusculas? ");
-    scanf("%d", &usarMin);
-
-    printf("Usar numeros? ");
-    scanf("%d", &usarNum);
-
-    printf("Usar simbolos? ");
-    scanf("%d", &usarSimb);
-  }
-
-  /* Monta vetor de caracteres */
+      /* Monta vetor de caracteres */
   MontaCaracteres(caracteres, usarMai,
                   usarMin, usarNum, usarSimb);
 
