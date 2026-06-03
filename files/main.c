@@ -20,10 +20,10 @@
 // importadas
 int verificarTamanho(int tamanho_valido);
 int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);	
+int VerificaSenhaForte(char senha[]);
 // locais
 void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb);
 void GeraSenha(char senha[], int tamanho, char caracteres[]);
-int VerificaSenhaForte(char senha[]);
 void SalvaArquivo(char senha[]);
 
 int main() {
@@ -55,7 +55,10 @@ usarMin = verificarDigitacao("Usar letras minusculas? ", "Erro, digite novamente
 
 usarNum = verificarDigitacao("Usar numeros? ", "Erro, digite novamente: ");
 
-usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: "); 
+usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
+
+if(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0){
+ printf("Preencha pelo menos um valor válido! \n ");}
 }while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
 
       /* Monta vetor de caracteres */
@@ -78,16 +81,11 @@ usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
   }
 
   /* Salvar arquivo */
-  printf("\nDeseja salvar a senha em arquivo?\n");
-  printf("1 - SIM\n");
-  printf("0 - NAO\n");
-  scanf("%d", &salvar);
-
+  salvar = verificarDigitacao("\nDeseja salvar a senha em arquivo?\n 1 - SIM\n 0 - NAO\n", "Erro, Digite um valor válido: ");
   if(salvar == 1) {
 
-    SalvaArquivo(senha);
-
-  } else {
+SalvaArquivo(senha);
+} else {
 
     printf("Senha nao salva.\n");
   }
@@ -96,57 +94,6 @@ usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
 
   return 0;
 
-}
-
-void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb) {
-
-  strcpy(caracteres, "");
-
-  if(mai == 1) {
-    strcat(caracteres, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  }
-
-  if(min == 1) {
-    strcat(caracteres, "abcdefghijklmnopqrstuvwxyz");
-  }
-
-  if(num == 1) {
-    strcat(caracteres, "0123456789");
-  }
-
-  if(simb == 1) {
-    strcat(caracteres, "!@#$%&*?");
-  }
-}
-void GeraSenha(char senha[], int tamanho, char caracteres[]) {
-
-  int i;
-  int tamCaracteres;
-
-  char mai[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  char min[] = "abcdefghijklmnopqrstuvwxyz";
-  char num[] = "0123456789";
-  char simb[] = "!@#$%&*?";
-
-  tamCaracteres = strlen(caracteres);
-
-  /* Garantia de senha forte */
-  senha[0] = mai[rand() % strlen(mai)];
-  senha[1] = min[rand() % strlen(min)];
-  senha[2] = num[rand() % strlen(num)];
-  senha[3] = simb[rand() % strlen(simb)];
-
-  /* Completa o restante da senha */
-  for(i = 4; i < tamanho; i++) {
-
-    int posicao;
-
-    posicao = rand() % tamCaracteres;
-
-    senha[i] = caracteres[posicao];
-  }
-
-  senha[tamanho] = '\0';
 }
 
 void SalvaArquivo(char senha[]) {
