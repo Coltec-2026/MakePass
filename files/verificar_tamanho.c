@@ -2,14 +2,15 @@
 
 int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);
 
-#define TAM_MAX 100
 
 /* Verifica tamanho válido */
-int verificarTamanho(int tamanho_valido){
-  while(tamanho_valido < 8 || tamanho_valido >= TAM_MAX) {
+int verificarTamanho(int tamanho_valido, int tam_min, int tam_max){
+	char valores[35];
+	sprintf(valores, "Digite um valor entre %d e %d", tam_min, tam_max);
+  while(tamanho_valido < tam_min || tamanho_valido >= tam_max) {
 
     printf("Tamanho invalido.\n");
-    tamanho_valido = verificarDigitacao("Digite um valor entre 8 e 99: ", "Tamanho invalido, digite novamente:\n");
+    tamanho_valido = verificarDigitacao( valores, "Tamanho invalido, digite novamente: ");
   }
   return tamanho_valido;
   }

@@ -18,12 +18,13 @@
 #define TAM_MAX 100
 
 // importadas
-int verificarTamanho(int tamanho_valido);
-int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);	
+int verificarTamanho(int tamanho_valido, int tam_min, int tam_max);
+int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);
 int VerificaSenhaForte(char senha[]);
-// locais
 void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb);
 void GeraSenha(char senha[], int tamanho, char caracteres[]);
+
+// locais
 void SalvaArquivo(char senha[]);
 
 int main() {
@@ -37,60 +38,60 @@ int main() {
   /* Inicialização da função rand */
   srand(time(NULL));
 
-  printf("====================================\n   GERADOR DE SENHAS ALEATORIAS\n ====================================\n");
+	  printf("====================================\n   GERADOR DE SENHAS ALEATORIAS\n ====================================\n");
 
   /* Tamanho da senha */
- tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");
+	 tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");
 
 /* Verifica tamanho válido */ 
-tamanho = verificarTamanho(tamanho);
+	tamanho = verificarTamanho(tamanho, 16, 512);
 
-  printf("\nDigite 1 para SIM ou 0 para NAO.\n");
+	 printf("\nDigite 1 para SIM ou 0 para NAO.\n");
 
   /* Escolha dos caracteres */
-do{
-usarMai = verificarDigitacao("Usar letras maiusculas? ", "Erro, digite novamente: " );  
+	do{
+		usarMai = verificarDigitacao("Usar letras maiusculas? ", "Erro, digite novamente: " );  
 
-usarMin = verificarDigitacao("Usar letras minusculas? ", "Erro, digite novamente: ");
+		usarMin = verificarDigitacao("Usar letras minusculas? ", "Erro, digite novamente: ");
 
-usarNum = verificarDigitacao("Usar numeros? ", "Erro, digite novamente: ");
+		usarNum = verificarDigitacao("Usar numeros? ", "Erro, digite novamente: ");
 
-usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
+		usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
 
-if(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0){
- printf("Preencha pelo menos um valor válido! \n ");}
-}while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
+		if(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0){
+			 printf("Preencha pelo menos um valor válido! \n ");}
+	}while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
 
       /* Monta vetor de caracteres */
-  MontaCaracteres(caracteres, usarMai,usarMin, usarNum, usarSimb);
+	MontaCaracteres(caracteres, usarMai,usarMin, usarNum, usarSimb);
 
   /* Gera senha */
-  GeraSenha(senha, tamanho, caracteres);
+	GeraSenha(senha, tamanho, caracteres);
 
   /* Exibe senha */
-  printf("\nSenha gerada automaticamente: %s\n", senha);
+	printf("\nSenha gerada automaticamente: %s\n", senha);
 
   /* Verifica força */
-  if(VerificaSenhaForte(senha) == 1) {
+	if(VerificaSenhaForte(senha) == 1) {
 
-    printf("Senha FORTE.\n");
+	printf("Senha FORTE.\n");
 
-  } else {
+	} else {
 
-    printf("Senha FRACA.\n");
-  }
+	printf("Senha FRACA.\n");
+  	}
 
   /* Salvar arquivo */
-  salvar = verificarDigitacao("\nDeseja salvar a senha em arquivo?\n 1 - SIM\n 0 - NAO\n", "Erro, Digite um valor válido: ");
-  if(salvar == 1) {
+	salvar = verificarDigitacao("\nDeseja salvar a senha em arquivo?\n 1 - SIM\n 0 - NAO\n", "Erro, Digite um valor válido: ");
+	if(salvar == 1) {
 
-SalvaArquivo(senha);
-} else {
+	SalvaArquivo(senha);
+	} else {
 
-    printf("Senha nao salva.\n");
+	printf("Senha nao salva.\n");
   }
 
-  printf("\nPrograma Finalizado.\n");
+printf("\nPrograma Finalizado.\n");
 
   return 0;
 
