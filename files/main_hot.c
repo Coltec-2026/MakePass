@@ -16,8 +16,10 @@ int main() {
         printf("\t1- Apenas números \n\t2- Apenas letras minúsculas \n\t3- Letras maiúsculas, minúsculas e números \n\t4- ASCII completo, todas as opções + simbolos: \t"); 
 	
 	while(scanf("%d", &conjunto) != 1 || conjunto > 4 || conjunto <= 0) { 
-		printf("\nDigite um valor válido: "); 		while(getchar() != '\n');
+		printf("\nDigite um valor válido: "); 		
+		while(getchar() != '\n');
 	} 	
+	
 	switch (conjunto){ 
 		case 1: 
 			p.numeros = 1;
@@ -39,7 +41,13 @@ int main() {
 		default: 
 			return 1; 
 	} 
-	printf("\nOs valores preenchidos são: %d, %d, %d e %d. ", p.numeros, p.minusculas, p.maiusculas, p.especiais); 
+	//printf("\nOs valores preenchidos são: %d, %d, %d e %d. ", p.numeros, p.minusculas, p.maiusculas, p.especiais); 
 
+	printf("\nDigite o tamanho da senha, deverá ser entre 16 e 256 caracteres: "); 
+	while(scanf("%d", &tamanho) != 1 || tamanho < 16){ 
+		printf("\nDigite um valor válido: "); 
+		while(getchar() != '\n'); 
+	} 
+			
 	return 0;
 } 
