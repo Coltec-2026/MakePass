@@ -13,7 +13,7 @@ void GeraSenha(char senha[], int tamanho, char caracteres[]) {
 
   tamCaracteres = strlen(caracteres);
 
-  /* Garantia de senha forte */
+  // Não é garantia de senha forte 
   senha[0] = mai[rand() % strlen(mai)];
   senha[1] = min[rand() % strlen(min)];
   senha[2] = num[rand() % strlen(num)];

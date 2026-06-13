@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
   Tema: Gerador de Senhas Aleatórias
   Funcionalidades:
   - Escolher tamanho da senha
@@ -6,8 +6,7 @@
   - Gerar senha aleatória
   - Verificar força da senha
   - Salvar senha em arquivo texto
-
-/* Bibliotecas utilizadas */
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,8 +36,30 @@ int main() {
 
   /* Inicialização da função rand */
   srand(time(NULL));
+//---------------------------
+  unsigned char entropia[64]; 
 
-	  printf("====================================\n   GERADOR DE SENHAS ALEATORIAS\n ====================================\n");
+  FILE *urandom = fopen("/dev/urandom", "rb"); 
+
+  if (urandom == NULL) {
+	  	perror("Erro ao abrir /dev/urandom"); 
+		return 1;
+ 	} 
+ size_t bytes_lidos = fread(entropia, sizeof(unsigned char), 64, urandom);  
+// size_t é um tipo primitivo que armazena ate 4gb. 
+// 64 são os bytes capturados  
+ if(bytes_lidos < 64){
+	printf("Erro: foram lidos apenas %zu bytes de entropia. \n", bytes_lidos);
+	fclose(urandom); 
+       return 1; 	
+	}
+ fclose(urandom); 
+
+ printf("Entropia capturada com sucesso:\n"); 
+// -------------------------------
+	  printf("Abaddon - gerador de senhas\n");
+	  // introduzir ASCII art
+
 
   /* Tamanho da senha */
 	 tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");

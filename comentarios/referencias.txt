@@ -1,0 +1,8 @@
+https://www.youtube.com/watch?v=0QA7eemva0k Propriedades da entropia de Shannon (Usado para adiquirir maior conhecimento do conceito de força)
+https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf?utm_source=chatgpt.com Matemática da comunicação (Artigo que explora o conceito e deverá ser usado para implementar a ideia) 
+
+https://www.youtube.com/watch?v=d3lYKB-vhvE Criptografia simetrica (As capacidades de processamento e limites computacionais atuais foram retiradas deste vídeo) 
+https://www.hivesystems.com/blog/are-your-passwords-in-the-green Hive system (referências de testes computacionais, ideia inicial da precisão envolvida na busca e quebra de senhas) 
+https://www.youtube.com/watch?v=yvNKuZqRmJ4 Hashcat (demonstração prática de utilização do hashcat e senhas extremamente vulneráveis através de protocolos de rede). 
+https://privatekeys.pw/puzzles/bitcoin-puzzle-tx Bitcoin puzzle transaction ( Demonstração prática e monetária dos limites da computação atual através de desafios com boas recompensas) 
+
