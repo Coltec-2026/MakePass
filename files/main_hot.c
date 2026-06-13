@@ -1,5 +1,5 @@
 #include <stdio.h> 
-
+#include <sys/random.h> 
 typedef struct {
 	int numeros;
 	int minusculas;
@@ -11,6 +11,7 @@ int main() {
 	Preferencias  p= {0,0,0,0}; 
 	int conjunto; 
 	int tamanho = 0; 
+	unsigned char buff[64]; 
 
 	printf("Escolha os caracteres que serão usados na sua senha: \n");
         printf("\t1- Apenas números \n\t2- Apenas letras minúsculas \n\t3- Letras maiúsculas, minúsculas e números \n\t4- ASCII completo, todas as opções + simbolos: \t"); 
@@ -48,6 +49,18 @@ int main() {
 		printf("\nDigite um valor válido: "); 
 		while(getchar() != '\n'); 
 	} 
-			
+	size_t bytes = getrandom(buff, sizeof(buff), 0); 
+
+	if(bytes == -1){ 
+		perror("getrandom"); 
+		return 1; 
+	} 
+	printf("Foram gerados %zd bytes \n", bytes); 
+	for( int i= 0; i < bytes; i++){ 
+
+		printf("02X", buff[i]); 
+	}
+	printf("\n"); 
+		
 	return 0;
 } 
