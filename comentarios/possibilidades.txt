@@ -1,0 +1,36 @@
+Processo de GeraçãoMistura (Hashing): Compacta e normaliza os bytes de entropia imprevisíveis.
+Derivação: Garante distribuição uniforme de bits, eliminando padrões.
+Codificação: Converte os bits resultantes em letras, números e símbolos.
+
+Possibilidades de conversão de entropia. 
+
+Descarte imediato: Apague os bytes brutos da memória após gerar a senha.
+Não reutilize: Se precisar de nova senha, colete nova entropia do sistema.
+Evite determinismo simples: Nunca use operadores matemáticos básicos (como + ou *) diretamente nos bytes para escolher caracteres, pois isso destrói a aleatoriedade.
+
+Para implementar essa lógica em Linguagem C, você deve combinar as escolhas do usuário em um único vetor de caracteres (o alfabeto disponível) e usar a entropia misturada com uma função de hash (como SHA-256) para selecionar os índices de forma segura.
+
+Segurança de Memória: O uso do memset(senha, 0, tamanho) no final é crucial. Ele garante que a senha gerada não fique flutuando na memória RAM após o término da execução.
+
+Mapeamento por Módulo (%): O operador % tam_alfabeto garante que o valor derivado da entropia caia exatamente em um índice válido do vetor de caracteres configurado pelo usuário.
+
+Complexidade na Lógica de Sorteio: Como a tabela ASCII é fragmentada (os números estão em um bloco, maiúsculas em outro e os especiais estão espalhados), você não pode simplesmente fazer índice % tamanho. O código precisará rodar em um laço (while) sorteando bytes da entropia até achar um que se encaixe nas regras do usuário (técnica de rejeição), o que consome mais processamento.Complexidade nos Caracteres Especiais: A tabela ASCII possui caracteres de controle invisíveis (como Line Feed ou Tab) e símbolos problemáticos (como o espaço ou aspas simples/duplas) que podem quebrar sistemas ou arquivos de configuração se incluídos na senha. Filtrar isso via código ASCII puro exige condicionais (if) complexas.Manutenção Difícil: Ler números como if (c >= 33 && c <= 47) torna o código menos legível para humanos do que olhar para uma string "=!@#$"
+Complexidade Oculta: A lógica com ASCII exige tratar cenários onde a entropia "acaba". Se o usuário escolher apenas números e o seu hash gerar muitos bytes correspondentes a letras, o código precisará gerar mais hash em loop para continuar sorteando (amostragem por rejeição). É melhor validar isso com calma depois.
+
+
+O Mecanismo: Entropia em Bits vs. Espaço de BuscaA força real de uma senha gerada aleatoriamente é medida em bits de entropia (\(H\)). A fórmula para calcular a segurança real de uma senha gerada aleatoriamente é:\(H=x\times \log _{2}(N)\)Onde:\(x\) = Tamanho da senha.\(N\) = Tamanho do alfabeto escolhido.Se o usuário escolher um alfabeto simples (\(N=10\), apenas números), cada caractere adicionado injeta aproximadamente 3.32 bits de entropia (\(\log_2(10)\)). Se ele escolher o alfabeto completo (\(N=95\)), cada caractere injeta 6.57 bits (\(\log_2(95)\)).Como o seu sistema já define um mínimo de 16 caracteres:No pior cenário (apenas números, \(10^{16}\)): A senha terá 53 bits de entropia.No melhor cenário (todos os caracteres, \(95^{16}\)): A senha terá 105 bits de entropia.Nota: Em criptografia, qualquer valor acima de 80 bits é considerado computacionalmente invulnerável contra ataques atuais.
+
+
+Como aplicar a Aleatoriedade focada no Tamanho (Sem o viés de tipos)Se o foco muda de "garantir que todos os tipos apareçam" para "maximizar a aleatoriedade pura ao longo do tamanho requisitado", o seu algoritmo em C muda drasticamente para melhor. Nós removemos o passo de separação por grupos e o embaralhamento final.O mecanismo passa a ser um fluxo contínuo e direto de extração de entropia:Unificação Precoce: O usuário escolhe as categorias apenas para definir o tamanho final do alfabeto (\(N\)). Se ele marcou tudo, \(N=95\). Se marcou só minúsculas, \(N=26\).Consumo Linear da Entropia: Para cada uma das \(x\) posições da senha, o código consome os bytes da sua entropia forte, aplica a rejeição de módulo (para manter a distribuição uniforme) e cospe o caractere correspondente.Vantagens dessa abordagem focada em Tamanho:Entropia Máxima por Caractere: Ao não forçar um caractere especial ou maiúscula em uma posição específica, você não dá nenhuma pista ao atacante. Cada caractere tem exatamente a mesma probabilidade de ser qualquer coisa dentro do alfabeto eleito.Simplificação do Código: O algoritmo fica muito mais limpo e rápido, eliminando a necessidade de funções de Shuffle (embaralhamento), pois a própria geração já nasce perfeitamente embaralhada pela força da entropia.
+
+Criar um calculador de bits de entropia em C para mostrar ao usuário a força real da senha dele na tela
+
+Explicar como redimensionar o seu vetor de bytes lidos para garantir que você tenha entropia suficiente caso o usuário peça uma senha muito longa
+
+Dessa forma, atravez das escolhas do usuário a variável n recebeu + ou menos caracteres com até 95; correto? o limite maximo é de 256 caracteres. O código analiza o tamanho da senha com um loop, fazendo o byte recebe os bytes de entropia até o limite maximo. e a senha final recebe o alfabeto unificado do começo, sua gaveta de identificação do armario é o resto da divisão do byte de entropia pela quantidade de caracteres usados.
+
+Se o armário tem \(N = 95\) gavetas, nós só podemos usar múltiplos exatos de 95 (\(95 \times 2 = 190\)). O limite_maximo calculado será 190. O loop analisa o byte de entropia: se ele for de 190 a 255, o código rejeita esse byte e pega o próximo. Isso impede que as primeiras 65 gavetas tenham mais chance de serem sorteadas do que as outras.3. A Gaveta de Identificação (byte % N)Correto. Após passar pelo filtro do limite máximo, o resto da divisão (% N) é o número exato da gaveta que o código vai abrir.Se o byte aceito for 188 e o armário tiver \(N = 95\) gavetas:\(\text{188\ /\ 95\ =\ 1\ (resto\ 93)}\)O código vai direto na gaveta 93 do alfabeto unificado, pega o caractere guardado ali e coloca na posição atual da senha.
+
+Ela é conhecida na computação como Amostragem por Rejeição de Senha Completa.No entanto, no contexto de um gerador que utiliza entropia real e finita, essa técnica traz uma armadilha crítica de segurança e desempenho.
+
+Se o usuário escolher um tamanho grande (como 16 ou mais caracteres), a probabilidade matemática de a entropia forte sortear naturalmente pelo menos um caractere de cada grupo é superior a 99%. O laço rodará apenas uma única vez na esmagadora maioria dos casos.
