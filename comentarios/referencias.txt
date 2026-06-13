@@ -1,8 +1,25 @@
-https://www.youtube.com/watch?v=0QA7eemva0k Propriedades da entropia de Shannon (Usado para adiquirir maior conhecimento do conceito de força)
-https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf?utm_source=chatgpt.com Matemática da comunicação (Artigo que explora o conceito e deverá ser usado para implementar a ideia) 
+Referências teoricas
+ https://www.youtube.com/watch?v=0QA7eemva0k Propriedades da entropia de Shannon (Usado para adiquirir maior conhecimento do conceito de força)
+https://youtube.com/shorts/BdGX8vg0UbI?si=c8nBGzAj9eOcBSJb Teorema de Bayses.
+ https://www.youtube.com/watch?v=d3lYKB-vhvE Criptografia simetrica (As capacidades de processamento e limites computacionais atuais foram retiradas deste vídeo) 
+https://pages.nist.gov/800-63-4/sp800-63b.html?utm_source=chatgpt.com NIST 
 
-https://www.youtube.com/watch?v=d3lYKB-vhvE Criptografia simetrica (As capacidades de processamento e limites computacionais atuais foram retiradas deste vídeo) 
+Referências praticas 
+
 https://www.hivesystems.com/blog/are-your-passwords-in-the-green Hive system (referências de testes computacionais, ideia inicial da precisão envolvida na busca e quebra de senhas) 
 https://www.youtube.com/watch?v=yvNKuZqRmJ4 Hashcat (demonstração prática de utilização do hashcat e senhas extremamente vulneráveis através de protocolos de rede). 
 https://privatekeys.pw/puzzles/bitcoin-puzzle-tx Bitcoin puzzle transaction ( Demonstração prática e monetária dos limites da computação atual através de desafios com boas recompensas) 
+https://www.ibm.com/docs/pt-br/aix/7.2.0?topic=files-random-urandom-devices /dev/random e urandom ( transcritores de arquivo e a segurança do método).
 
+
+Referências de implementações futuras 
+
+https://bips.dev/85/ bip 85 para implementação futura
+https://bips.dev/32/ bip 32 para implementação futura 
+https://bips.dev/39/ O mesmo, porem o primeiro dos bips.
+ https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf?utm_source=chatgpt.com Matemática da comunicação (Artigo que explora o conceito e deverá ser usado para implementar a ideia) 
+
+Referências complementares 
+
+https://livecoins.com.br/arkham-revela-carteiras-de-satoshi-nakamoto-criador-do-bitcoin-com-r-627-bilhoes/https://youtu.be/RZmfuuABTHY?si=8IAIHVxDki4-OM_G Curiosidade ( endereços que satoshi nakamoto possui, chave pública expostas). 
+https://youtu.be/RZmfuuABTHY?si=8IAIHVxDki4-OM_G Curso de linguagem C, ensinando a trabalhar com compilador.
