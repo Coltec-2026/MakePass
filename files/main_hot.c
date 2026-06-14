@@ -23,7 +23,7 @@ char obter_caractere(Conjunto conjuntos[],int qtd,size_t indice);
 */ 
 
 int main() { 
-	//Preferencias  p= {0,0,0,0}; 
+	// ----------- Declarações ---------------
 	int conjunto; 
 	int tamanho = 0; 
 	unsigned char buff[1028]; 
@@ -55,6 +55,8 @@ int main() {
 		} 	
 		
 	}; 
+
+	// ---------- Enunciado --------------	
 	
 	printf("Escolha os caracteres que serão usados na sua senha: \n");
         printf("\t1- Apenas números \n\t2- Letras minúsculas \n\t3-Alfanumerico \n\t4- Alfanumerico + simbolos: \t"); 
@@ -63,7 +65,9 @@ int main() {
 		printf("\nDigite um valor válido: "); 		
 		while(getchar() != '\n');
 	} 	
-	
+
+	// ------- Ligado ou desligado. ------
+
 	switch (conjunto){ 
 		case 1: 
 			conjuntos[0].habilitado = 1;
@@ -85,51 +89,39 @@ int main() {
 		default: 
 			return 1; 
 	} 
-	//printf("\nOs valores preenchidos são: %d, %d, %d e %d. ", p.numeros, p.minusculas, p.maiusculas, p.especiais); 
 
 	printf("\nDigite o tamanho da senha, deverá ser entre 16 e 128 caracteres: "); 
 	while(scanf("%d", &tamanho) != 1 || tamanho < 16 || tamanho > SENHA_MAX){ 
 		printf("\nDigite um valor válido: "); 
 		while(getchar() != '\n'); 
-	} 
+	}
+       // ------------- Tamanho e conjunto capturados. 	
+	
 	ssize_t bytes = getrandom(buff, sizeof(buff), 0); 
 	if(bytes == -1){ 
 		perror("getrandom"); 
 		return 1; 
-	} 
-	printf("Foram gerados %zd bytes \n", bytes); 
+	
+	}
+       
+	// ------------ Bytes de entropia capturados somente após aguardar respostas do usuário. 	
+	
+	printf("Foram gerados %zd bytes \n", bytes);
+	
+	/* mostrar os dados de entropia são apenas para fins demonstrativos. Não devem permanecer nos processos 
+	
 	for( int i= 0; i < bytes; i++){ 
 
 		printf("%02X", buff[i]); 
 	}
 	printf("\n"); 
-
-		
+	*/	
 	
-	size_t universo = calcular_universo(conjuntos); 
-	size_t bits = bits_necessarios(universo);
-	char obter_caractere(
-    Conjunto conjuntos[],
-    int qtd,
-    size_t indice)
-{
-    for(int i = 0; i < qtd; i++)
-    {
-        if(!conjuntos[i].habilitado)
-        {
-            continue;
-        }
+	size_t universo = calcular_universo(conjuntos); // calcula a soma dos conjuntos para determinar o universo 
+	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo.
+	
+	// funçao 
 
-        if(indice < conjuntos[i].tamanho)
-        {
-            return conjuntos[i].caracteres[indice];
-        }
-
-        indice -= conjuntos[i].tamanho;
-    }
-
-    return '?';
-}
 //-----------------
 	uint64_t mascara = (1ULL << bits) - 1;
 	uint64_t pool_acumulador = 0;
@@ -138,59 +130,42 @@ int main() {
 	char senha[SENHA_MAX + 1];
 	size_t pos_senha = 0;
 
-while(pos_senha < (size_t)tamanho)
-{
-    while(bits_disponiveis < (int)bits)
-    {
-        if(pos_buff >= (size_t)bytes)
-        {
-            break;
-        }
+	while(pos_senha < (size_t)tamanho){
+    		while(bits_disponiveis < (int)bits){
+        		if(pos_buff >= (size_t)bytes){
+            			break;
+        		}
 
-        pool_acumulador |=
-            ((uint64_t)buff[pos_buff] << bits_disponiveis);
+        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis);
+        		bits_disponiveis += 8;
+        		pos_buff++;
+    		}
 
-        bits_disponiveis += 8;
+    	if(bits_disponiveis < (int)bits){
+        	break;
+    	}
 
-        pos_buff++;
-    }
+    	size_t valor = pool_acumulador & mascara;
 
-    if(bits_disponiveis < (int)bits)
-    {
-        break;
-    }
+    	pool_acumulador >>= bits;
+    	bits_disponiveis -= bits;
 
-    size_t valor =
-        pool_acumulador & mascara;
-
-    pool_acumulador >>= bits;
-
-    bits_disponiveis -= bits;
-
-    if(valor >= universo)
-    {
+    	if(valor >= universo){
         continue;
-    }
+    	}
 
-    char letra =
-        obter_caractere(
-            conjuntos,
-            4,
-            valor
-        );
+    		char letra = obter_caractere(conjuntos,4,valor);
+    		senha[pos_senha++] = letra;
+	}
 
-    senha[pos_senha++] = letra;
-}
+	senha[pos_senha] = '\0';
+	printf("\nSenha: %s\n", senha);
 
-senha[pos_senha] = '\0';
-
-printf("\nSenha: %s\n", senha);
-
-return 0;
-} 
-size_t calcular_universo(Conjunto conjuntos[]) 
-{ 
-size_t universo= 0;
+	return 0;
+	} 
+// -------- Fim da main -------	
+size_t calcular_universo(Conjunto conjuntos[]) { 
+	size_t universo= 0;
 
 	for(int i= 0;i < 4; i++){ 
 		if(conjuntos[i].habilitado){ 
@@ -198,18 +173,32 @@ size_t universo= 0;
 		}
 	}
 	return universo; 
-} 
+	} 
 
 size_t bits_necessarios(size_t universo){ 
-	// Os valores do universo são calculados conforme a base 2, se 2⁶ é 64 e universo possui 62, ele ira retornar com 6, pois é o menor número de bits necessários para representar todos os números do universo. 2^(bits).
-	size_t bits= 0;
-	size_t valor= 1;
+		// Os valores do universo são calculados conforme a base 2, se 2⁶ é 64 e universo possui 62, ele ira retornar com 6, pois é o menor número de bits necessários para representar todos os números do universo. 2^(bits).
+		size_t bits= 0;
+		size_t valor= 1;
 
-	while(valor < universo)
-	{ 
+		while(valor < universo){ 
 		valor <<= 1;
 		bits++; 
+		} 
+		return bits;
 	} 
-	return bits;
-} 
+	char obter_caractere(Conjunto conjuntos[],int qtd, size_t indice)
+	{
+    		for(int i = 0; i < qtd; i++){
+        		if(!conjuntos[i].habilitado){	
+            		continue;
+        	}
 
+        	if(indice < conjuntos[i].tamanho){
+            		return conjuntos[i].caracteres[indice];
+	       	}
+
+        	indice-= conjuntos[i].tamanho;
+    		}
+
+    		return '?';
+	}
