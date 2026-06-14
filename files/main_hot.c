@@ -1,3 +1,4 @@
+#include <math.h> 
 #include <stdint.h> 
 #include <stdio.h> 
 #include <sys/random.h> 
@@ -10,7 +11,10 @@ typedef struct {
 	const char *caracteres; 
 	size_t tamanho; 
 	int habilitado;
-} Conjunto; 
+} Conjunto;
+
+
+size_t calcular_forca(size_t N ,size_t x );
 size_t calcular_universo(Conjunto conjuntos[]);
 size_t bits_necessarios(size_t universo);
 char obter_caractere(Conjunto conjuntos[],int qtd,size_t indice);
@@ -118,14 +122,14 @@ int main() {
 	*/	
 	
 	size_t universo = calcular_universo(conjuntos); // calcula a soma dos conjuntos para determinar o universo 
-	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo.
+	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. 
 	
-	// funçao 
+	calcular_forca(universo, tamanho); // tamanho inserido pelo usuário
 
 //-----------------
-	uint64_t mascara = (1ULL << bits) - 1;
-	uint64_t pool_acumulador = 0;
-	int bits_disponiveis = 0;
+	uint64_t mascara = (1ULL << bits) - 1; // mascara recebe os bits, que são exatamente os que são necessários para medir o universo em bits
+	uint64_t pool_acumulador = 0; // será usado para armazenar bits restantes quando remover 2 bits dos bytes
+	int bits_disponiveis = 0; 
 	size_t pos_buff = 0;
 	char senha[SENHA_MAX + 1];
 	size_t pos_senha = 0;
@@ -164,6 +168,7 @@ int main() {
 	return 0;
 	} 
 // -------- Fim da main -------	
+
 size_t calcular_universo(Conjunto conjuntos[]) { 
 	size_t universo= 0;
 
@@ -202,3 +207,10 @@ size_t bits_necessarios(size_t universo){
 
     		return '?';
 	}
+size_t calcular_forca(size_t N ,size_t x )
+{ 	
+	// size_t area = (size_t)pow(N,x); Devido a magnitude dos números não é possível na maioria dos casos exibilos.
+	printf("\nArea de busca possível: %zu^%zu.\n", N, x); 
+	
+	return 0; 
+} 
