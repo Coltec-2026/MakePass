@@ -26,7 +26,7 @@ int main() {
 	//Preferencias  p= {0,0,0,0}; 
 	int conjunto; 
 	int tamanho = 0; 
-	unsigned char buff[64]; 
+	unsigned char buff[1028]; 
 
 	Conjunto conjuntos[] = { 
 		{ 	
