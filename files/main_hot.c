@@ -1,7 +1,8 @@
 #include <stdint.h> 
 #include <stdio.h> 
 #include <sys/random.h> 
-#include <string.h> 
+#include <string.h>
+#include <sys/types.h> 
 #define SENHA_MAX 128
 
 typedef struct { 
@@ -12,6 +13,7 @@ typedef struct {
 } Conjunto; 
 size_t calcular_universo(Conjunto conjuntos[]);
 size_t bits_necessarios(size_t universo);
+char obter_caractere(Conjunto conjuntos[],int qtd,size_t indice);
 
 /* Cada campo representa: 
  	nome -> descrição do conjunto;
@@ -41,7 +43,7 @@ int main() {
 		}, 
 		{ 
 		.nome= "Maiusculas", 
-		.caracteres= "ABCDEFGIJKLMNOPQRSTUVWXYZ", 
+		.caracteres= "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 
 		.tamanho= 26,
 		.habilitado= 0
 		},
@@ -90,7 +92,7 @@ int main() {
 		printf("\nDigite um valor válido: "); 
 		while(getchar() != '\n'); 
 	} 
-	size_t bytes = getrandom(buff, sizeof(buff), 0); 
+	ssize_t bytes = getrandom(buff, sizeof(buff), 0); 
 	if(bytes == -1){ 
 		perror("getrandom"); 
 		return 1; 
@@ -106,41 +108,85 @@ int main() {
 	
 	size_t universo = calcular_universo(conjuntos); 
 	size_t bits = bits_necessarios(universo);
+	char obter_caractere(
+    Conjunto conjuntos[],
+    int qtd,
+    size_t indice)
+{
+    for(int i = 0; i < qtd; i++)
+    {
+        if(!conjuntos[i].habilitado)
+        {
+            continue;
+        }
 
-	uint64_t mascara= (1ULL << bits) -1;// formato 64bits com atribuição dos bits menos significativos. unsignedlonglong 	
-	//valor = pool & mascara; 
-	//valor = buff[i] % universo; 
-	uint64_t pool_acumulador= 0; 
-	int bits_disponiveis= 0;
-	size_t pos_buff= 0; 
-	size_t valor; // indice sorteado
-	
-	if (bits_disponiveis < bits) 
-	{ pool_acumulador |=  ((uint64_t)buff[pos_buff] << bits_disponiveis); 
-	bits_disponiveis += 8;
-	pos_buff++; 
-	}
-	if(pos_buff >= bytes)
-	{ break; } 
+        if(indice < conjuntos[i].tamanho)
+        {
+            return conjuntos[i].caracteres[indice];
+        }
 
-	valor = pool_acumulador & mascara;
-	pool_acumulador >>= bits; 
-	bits_disponiveis-= bits; 
-	
-	if(valor >= universo)
-	{ continue;} 
+        indice -= conjuntos[i].tamanho;
+    }
 
-	char letra = obter_caractere(conjuntos, 4, valor);
-	senha[pos, senha++] = letra;
-	//printf("\n%zu ", universo); 
-	//size_t calcular_universo(),int  bits_necessários(),char obter_caractere(), gerar_senha 
-	pos_buf++ ;
-	while(pos_senha < tamanho_senha)
-	{ // gerar novo indice onde letra é calculada a cada iteração. 
-	  // senha[pos_senha++] = letra
-		while(bits_disponiveis < bits)
-		{ 
+    return '?';
+}
+//-----------------
+	uint64_t mascara = (1ULL << bits) - 1;
+	uint64_t pool_acumulador = 0;
+	int bits_disponiveis = 0;
+	size_t pos_buff = 0;
+	char senha[SENHA_MAX + 1];
+	size_t pos_senha = 0;
 
+while(pos_senha < (size_t)tamanho)
+{
+    while(bits_disponiveis < (int)bits)
+    {
+        if(pos_buff >= (size_t)bytes)
+        {
+            break;
+        }
+
+        pool_acumulador |=
+            ((uint64_t)buff[pos_buff] << bits_disponiveis);
+
+        bits_disponiveis += 8;
+
+        pos_buff++;
+    }
+
+    if(bits_disponiveis < (int)bits)
+    {
+        break;
+    }
+
+    size_t valor =
+        pool_acumulador & mascara;
+
+    pool_acumulador >>= bits;
+
+    bits_disponiveis -= bits;
+
+    if(valor >= universo)
+    {
+        continue;
+    }
+
+    char letra =
+        obter_caractere(
+            conjuntos,
+            4,
+            valor
+        );
+
+    senha[pos_senha++] = letra;
+}
+
+senha[pos_senha] = '\0';
+
+printf("\nSenha: %s\n", senha);
+
+return 0;
 } 
 size_t calcular_universo(Conjunto conjuntos[]) 
 { 
