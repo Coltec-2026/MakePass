@@ -1,5 +1,7 @@
 #include <stdio.h> 
 #include <sys/random.h> 
+#include <string.h> 
+
 typedef struct {
 	int numeros;
 	int minusculas;
@@ -7,45 +9,87 @@ typedef struct {
 	int especiais; 
 } Preferencias;  
 
+typedef struct { 
+	const char *nome; 
+	const char *caracteres; 
+	size_t tamanho; 
+	int habilitado;
+} Conjunto; 
+
+/* Cada campo representa: 
+ 	nome -> descrição do conjunto;
+	caracteres -> string contendo os cadatcetes válidos
+	tamanho -> quantidade de caracteres. 
+	habilitado -> 0 ou 1.
+*/ 
+
 int main() { 
-	Preferencias  p= {0,0,0,0}; 
+	//Preferencias  p= {0,0,0,0}; 
 	int conjunto; 
 	int tamanho = 0; 
 	unsigned char buff[64]; 
 
-	printf("Escolha os caracteres que serão usados na sua senha: \n");
-        printf("\t1- Apenas números \n\t2- Apenas letras minúsculas \n\t3- Letras maiúsculas, minúsculas e números \n\t4- ASCII completo, todas as opções + simbolos: \t"); 
+	Conjunto conjuntos[] = { 
+		{ 	
+		.nome= "Numeros",
+		.caracteres= "0123456789", 
+		.tamanho= 10, 
+		.habilitado= 0
+		},
+		{ 
+		.nome= "Minusculas",
+		.caracteres= "abcdefghijklmnopqrstuvwxyz", 
+		.tamanho= 26, 
+		.habilitado= 0
+		}, 
+		{ 
+		.nome= "Maiusculas", 
+		.caracteres= "ABCDEFGIJKLMNOPQRSTUVWXYZ", 
+		.tamanho= 26,
+		.habilitado= 0
+		},
+		{ 
+		.nome= "Especiais", 
+		.caracteres= "!@#$%^&*()-_=+", 
+		.tamanho= 15, 
+		.habilitado= 0
+		} 	
+		
+	}; 
 	
-	while(scanf("%d", &conjunto) != 1 || conjunto > 4 || conjunto <= 0) { 
+	printf("Escolha os caracteres que serão usados na sua senha: \n");
+        printf("\t1- Apenas números \n\t2- Letras minúsculas \n\t3-Alfanumerico \n\t4- Alfanumerico + simbolos: \t"); 
+	
+	while(scanf("%d", &conjunto) != 1) { 
 		printf("\nDigite um valor válido: "); 		
 		while(getchar() != '\n');
 	} 	
 	
 	switch (conjunto){ 
 		case 1: 
-			p.numeros = 1;
+			conjuntos[0].habilitado = 1;
 			break; 
 		case 2:  
-			p.minusculas = 1; 
+			conjuntos[1].habilitado = 1; 
 			break;
 		case 3: 
-			p.minusculas = 1;
-			p.maiusculas = 1; 
-			p.numeros = 1; 
+			conjuntos[0].habilitado = 1;
+			conjuntos[1].habilitado= 1; 
+			conjuntos[2].habilitado = 1; 
 			break;
 		case 4:
-		       	p.minusculas = 1;
-			p.maiusculas = 1; 
-			p.numeros = 1; 
-			p.especiais = 1;
+		       	conjuntos[0].habilitado = 1;
+			conjuntos[1].habilitado = 1; 
+			conjuntos[2].habilitado = 1; 
+			conjuntos[3].habilitado = 1;
 			break;
 		default: 
 			return 1; 
 	} 
 	//printf("\nOs valores preenchidos são: %d, %d, %d e %d. ", p.numeros, p.minusculas, p.maiusculas, p.especiais); 
 
-	printf("\nDigite o tamanho da senha, deverá ser entre 16 e 256 caracteres: "); 
-	while(scanf("%d", &tamanho) != 1 || tamanho < 16){ 
+	printf("\nDigite o tamanho da senha, deverá ser entre 16 e 128 caracteres: "); 
+	while(scanf("%d", &tamanho) != 1 || tamanho < 16 || tamanho > 128){ 
 		printf("\nDigite um valor válido: "); 
 		while(getchar() != '\n'); 
 	} 
@@ -58,9 +102,15 @@ int main() {
 	printf("Foram gerados %zd bytes \n", bytes); 
 	for( int i= 0; i < bytes; i++){ 
 
-		printf("02X", buff[i]); 
+		printf("%02X", buff[i]); 
 	}
 	printf("\n"); 
 		
+	size_t universo;
+
+	for(int i= 0;i < 4; i++){ 
+		if(conjuntos[i].habilitado){ 
+			universo+= conjuntos[i].tamanho; 
+		} 
 	return 0;
 } 

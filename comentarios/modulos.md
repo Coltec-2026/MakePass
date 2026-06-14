@@ -5,10 +5,10 @@ Essa ideia é a implementação da arquitetura limpa, que permite ao programador
 
 
 # Entropia
-  Em principio, a função srand() foi utilizada com time() para zerar a contagem atravez do relógio do computador. Entretanto, a entropia(aleatoriedade) da senha atravez da função rand(), que foi usada para inserir valores que mais tarde, foram identificados como pseudo aleatórios, estes que eram inseridos  em posições iniciais do vetor da senha, e depois a senha era embaralhada pelo algorítimo de ficher yates.
-O problema: Se um atacante souber que usei este software para gerar a senha, e ele usa a hora do sistema para capturar um valor pseudo aleatorio gerado. Essa não é uma entropia real. Passar por um algoritimo de embaralhamento previsivel e aberto, automaticamente causaria a engenharia reversa para que a senha seja quebrada se torna rápida, trivial e barata.
-Como solução para esse problema, foi utilizado o arquivo urandon /dev/urandm do sistema (Baseado em linux). Esse arquivo contem números pseudoaleatorios criptograficamente seguros derivado de fontes físicas, é uma interface para o gerador de números  criptograficamente seguros do kernel (CSPRNG) que é alimentado por diversas fontes de entropia; Pode ser movimento do mouse, pacotes de rede, operações de disco e etc. Se caso o mesmo método for usado no windows deverá ser feito pelo BCryptGenRandom da biblioteca Bcrypt.h.
-Esse método  reduz drasticamente falhas relacionadas a telemetria reduzindo drasticamente a viabilidade de engenharia reversa, basearmos semente do gerador. A derivação criptográfica costuma ser ser feita com protocolo Chaccha20 e funciona como um liquidificador do kernel. 
+  Em principio, a função srand() foi utilizada com time() para zerar a contagem atravez do relógio do computador. Entretanto, a entropia(aleatoriedade) da senha atravez da função rand(), que foi usada para inserir valores que mais tarde, foram identificados como pseudo aleatórios,além de ter valores inseridos  em posições iniciais do vetor da senha o que produz viéz, e depois a senha era embaralhada pelo algorítimo de ficher yates. Essa forma não possuia entropia real, e o embaralhamento da senha feito de forma previsível e inserir valores automaticamente deixava o resultado como um dado viciado ou uma carta marcada. Não tem garante da distribuição correta na forma de distribuição de caracteres para medir a magnitude da força.
+O problema: Se um atacante souber que usei este software para gerar a senha, e ele usa a hora do sistema para capturar um valor pseudo aleatorio gerado. Essa não é uma entropia real. Passar por um algoritimo de embaralhamento previsivel e aberto, automaticamente causaria a engenharia reversa para que a senha seja quebrada de forma rápida, trivial e barata.
+Como solução para esse problema, foi utilizado o arquivo urandon /dev/urandm através da função getrandon() (sistema Baseado em linux) para fazer isso diretamente pela função e não pela requisição do arquivo diretamente, foi preciso incluir a biblioteca <sys/random.h>. Esse arquivo contem números pseudoaleatorios criptograficamente seguros derivado de fontes físicas, é uma interface para o gerador de números  criptograficamente seguros do kernel (CSPRNG) que é alimentado por diversas fontes de entropia; Pode ser movimento do mouse, pacotes de rede, operações de disco e etc. Se caso o mesmo método for usado no windows deverá ser feito pelo BCryptGenRandom da biblioteca Bcrypt.h.
+Esse método  reduz drasticamente falhas relacionadas a telemetria reduzindo a viabilidade de engenharia reversa baseando a interpretação  do gerador de entropia. A derivação criptográfica costuma ser ser feita com protocolo Chaccha20 e funciona como um liquidificador do kernel. 
 
 # Tamanho da senha
 
@@ -16,7 +16,8 @@ Esse método  reduz drasticamente falhas relacionadas a telemetria reduzindo dra
 Conforme o estudo apresentado pela hive system usando hashcat, o tamanho da senha é a principal diferença entre uma senha fraca e uma senha forte, significa que o esforço bruto aumenta exponencialmente a dificuldade apresentada para quebra da criptografia através da força bruta. Calculo matemático que será exibido mais a frente. 
  
 Nos estudos usando hashcat senhas com até 8 caracteres, a depender do arsenal do atacante podem ser quebradas instantaneamente; Combinadas, juntamente com o padrão de criptografia do sistema atacado, sendo o mais antigo e obseleto do estudo,  MD5. 
-Atualmente se utiliza para criptografias mais fortes,o bcrypt; Que aumenta significativamente o processo de quebra criptografica pelo esforço computacional.
+Atualmente se utiliza para criptografias mais fortes,o bcrypt; Que aumenta significativamente o tempo do processo de quebra criptografica pelo esforço computacional.
+
 Desde que os estudos foram iniciados em 2021, o uso do treinamento de inteligencia artificial como o chatgpt 3 e 4, representaram o maior impacto de todos em relação ao processamento; Modelos de IA tem aperfeiçoado o poder de busca computacional significativamente, reduzindo o espaço de busca ao priorizar senhas mais provaveis, asssim como faz o Teoria da bussca Bayseana; 
 Se fizermos uma analogia, poderia ajudar a reduzir o tempo de busca de um navio perdido no mar separando-o em pequenas células, e usando análise estatista e probabilistica a cada novo espaço procurado para acertar o local correto. Computação inteligente, usando dados para reduzir o tempo de busca de padrões aplicados a senhas.
 
@@ -38,16 +39,16 @@ Para a primeira etapa será  entre 16 e 512 caracteres correspondendo ao tamanho
 
 # Força
 
-C = N⁽x⁾ 
+C = N⁽x⁾, essa formula matematica revela a dificuldade computacional na quebra de uma senha baseada em forte entropia. 
 
 N= O número de caracteres possíveis no conjunto; Se usar apenas letras minúsculas N=26. Maiusculas,números e simbolos  N=95. 
 x = Comprimento. 
-Portanto, enquanto o tipo de caratere multiplica a força da senha, o tamanho aumenta a força exponencialmente. Isso significa que se um invasor duplica o poder computacional para o hashcat  processar testes, reduz muito mais o tempo em relação a adicionar um tipo de caractere especial, maiuscula ou minuscula, mas um pequeno aumento na quantidade de caracteres, eleva o processamento de alguns dias para milhões ou bilhões de anos.
+Portanto, enquanto o tipo de caratere multiplica a força da senha, o tamanho aumenta a força exponencialmente. Isso significa que se um invasor duplica o poder computacional para o hashcat  processar testes, reduz muito mais o tempo em relação a adicionar um tipo de caractere especial, se já usa alfa numerica, mas um pequeno aumento na quantidade de caracteres, eleva o processamento de alguns dias para milhões ou bilhões de anos.
  Orgãos como o NIST confirma que frases longas e fáceis de lembrar são exponencialmente mais seguras do que senhas curtas, complexas e difíceis de digitar.
 
 ATENÇÃO
 Tudo o que foi falado vale para boas aplicações de geração de senhas é sobre a hipótese muito importante, que as senhas sejam geradas de formas verdadeiramente aleatória e uniforme, escolhendo cada caractere independentemente, dentro de um alfabeto de tamanho N..
-**Senhas geradas por humanos** reduzem significativamente o tempo de ataque, pois pessoas usam palavras do dicionário, utilizam datas, nomes, padrões de teclas do teclado, substituições previsiveis de letras por caracteres especiais, reutilizam estruturas semelhantes. Portanto, o teste de força da senha é limitado.E o teste de força assume que a entropia é segura, e a distribuição é uniforme, aplica ``H= x log2(N)``.
+**Senhas geradas por humanos** reduzem significativamente o tempo de ataque, pois pessoas usam palavras do dicionário, utilizam datas, nomes, padrões de teclas do teclado, substituições previsiveis de letras por caracteres especiais, reutilizam estruturas semelhantes. Portanto, o teste de força da senha é limitado.E o teste de força assume que a entropia é segura, e a distribuição é uniforme, aplica ``H= x*log2(N)``. x é o comprimento e N é o conjunto de caracteres.
 
 Entropia prevista por caractere: 
 
