@@ -1,0 +1,138 @@
+/*
+  Tema: Gerador de Senhas Aleatórias
+  Funcionalidades:
+  - Escolher tamanho da senha
+  - Escolher tipos de caracteres
+  - Gerar senha aleatória
+  - Verificar força da senha
+  - Salvar senha em arquivo texto
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+//#include <secp256k1.h>
+#include <string.h>
+
+#define TAM_MAX 100
+
+// importadas
+int verificarTamanho(int tamanho_valido, int tam_min, int tam_max);
+int verificarDigitacao(const char *mensagem_inicial,const char *mensagem_err);
+int VerificaSenhaForte(char senha[]);
+void MontaCaracteres(char caracteres[], int mai, int min, int num, int simb);
+void GeraSenha(char senha[], int tamanho, char caracteres[]);
+
+// locais
+void SalvaArquivo(char senha[]);
+
+int main() {
+  
+  // variaveis prenchidas pelo usuario que não são inicializadas podem gerar erro de comportamento.	
+  int tamanho = 0;
+  int usarMai, usarMin, usarNum, usarSimb, salvar;
+  char caracteres[TAM_MAX];
+  char senha[TAM_MAX];
+
+  /* Inicialização da função rand */
+  srand(time(NULL));
+//---------------------------
+  unsigned char entropia[64]; 
+
+  FILE *urandom = fopen("/dev/urandom", "rb"); 
+
+  if (urandom == NULL) {
+	  	perror("Erro ao abrir /dev/urandom"); 
+		return 1;
+ 	} 
+ size_t bytes_lidos = fread(entropia, sizeof(unsigned char), 64, urandom);  
+// size_t é um tipo primitivo que armazena ate 4gb. 
+// 64 são os bytes capturados  
+ if(bytes_lidos < 64){
+	printf("Erro: foram lidos apenas %zu bytes de entropia. \n", bytes_lidos);
+	fclose(urandom); 
+       return 1; 	
+	}
+ fclose(urandom); 
+
+ printf("Entropia capturada com sucesso:\n"); 
+// -------------------------------
+	  printf("Abaddon - gerador de senhas\n");
+	  // introduzir ASCII art
+
+
+  /* Tamanho da senha */
+	 tamanho =  verificarDigitacao( "Digite quantos caracteres a senha deve ter: ",  "Erro: Voce não digitou um número válido! \n Digite novamente: ");
+
+/* Verifica tamanho válido */ 
+	tamanho = verificarTamanho(tamanho, 16, 512);
+
+	 printf("\nDigite 1 para SIM ou 0 para NAO.\n");
+
+  /* Escolha dos caracteres */
+	do{
+		usarMai = verificarDigitacao("Usar letras maiusculas? ", "Erro, digite novamente: " );  
+
+		usarMin = verificarDigitacao("Usar letras minusculas? ", "Erro, digite novamente: ");
+
+		usarNum = verificarDigitacao("Usar numeros? ", "Erro, digite novamente: ");
+
+		usarSimb = verificarDigitacao("Usar simbolos? ", "Erro, digite novamente: ");
+
+		if(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0){
+			 printf("Preencha pelo menos um valor válido! \n ");}
+	}while(usarMai == 0 && usarMin == 0 && usarNum == 0 && usarSimb == 0); 
+
+      /* Monta vetor de caracteres */
+	MontaCaracteres(caracteres, usarMai,usarMin, usarNum, usarSimb);
+
+  /* Gera senha */
+	GeraSenha(senha, tamanho, caracteres);
+
+  /* Exibe senha */
+	printf("\nSenha gerada automaticamente: %s\n", senha);
+
+  /* Verifica força */
+	if(VerificaSenhaForte(senha) == 1) {
+
+	printf("Senha FORTE.\n");
+
+	} else {
+
+	printf("Senha FRACA.\n");
+  	}
+
+  /* Salvar arquivo */
+	salvar = verificarDigitacao("\nDeseja salvar a senha em arquivo?\n 1 - SIM\n 0 - NAO\n", "Erro, Digite um valor válido: ");
+	if(salvar == 1) {
+
+	SalvaArquivo(senha);
+	} else {
+
+	printf("Senha nao salva.\n");
+  }
+
+printf("\nPrograma Finalizado.\n");
+
+  return 0;
+
+}
+
+void SalvaArquivo(char senha[]) {
+
+  FILE *arquivo;
+
+  arquivo = fopen("senhas.txt", "a");
+
+  if(arquivo == NULL) {
+
+    printf("Erro ao abrir o arquivo.\n");
+    return;
+  }
+
+  fprintf(arquivo, "Senha Gerada: %s\n", senha);
+
+  fclose(arquivo);
+
+  printf("Senha salva no arquivo com sucesso.\n");
+}
