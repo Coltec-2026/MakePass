@@ -32,7 +32,7 @@ int main() {
 	// ----------- Declarações ---------------
 	int conjunto; 
 	int tamanho = 0; 
-	unsigned char buff[1028]; // representação em bits 
+	unsigned char buff[1028]; // representação em bytes por casa, 1028 bytes, 1028 casas com 8. 
 
 	Conjunto conjuntos[] = { 
 		{ 	
@@ -103,10 +103,11 @@ int main() {
 	}
        // ------------- Tamanho e conjunto capturados. 	
 	
-	ssize_t bytes = getrandom(buff, sizeof(buff), 0); 
+	ssize_t bytes = getrandom(buff, sizeof(buff), 0); // tamanho atual permite 1174 testes de amostragem com universo 4. 1028 x 8 / 7.  
 	if(bytes == -1){ 
 		perror("getrandom"); 
 		return 1; 
+		// ssize_t permite o bit de sinal, indicando se houve erro, atribuindo valor de bytes capturados com sucesso ou não para encerrar.
 	
 	}
        
@@ -124,27 +125,28 @@ int main() {
 	*/	
 	
 	size_t universo = calcular_universo(conjuntos); // calcula a soma dos conjuntos para determinar o universo 
-	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. 
+	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. universo 10, é 4. 
 	
 	calcular_forca(universo, tamanho); // tamanho inserido pelo usuário
-	entropia_final(universo, tamanho); 
+	entropia_final(universo, tamanho); // a força de entropia estimada H
 //-----------------
-	uint64_t mascara = (1ULL << bits) - 1; // mascara recebe os bits, que são exatamente os que são necessários para medir o universo em bits
-	uint64_t pool_acumulador = 0; // será usado para armazenar bits restantes quando remover 2 bits dos bytes
-	int bits_disponiveis = 0; 
-	size_t pos_buff = 0;
-	char senha[SENHA_MAX + 1];
-	size_t pos_senha = 0;
+	uint64_t mascara = (1ULL << bits) - 1; // mascara recebe as casas de bits que são necessárias para gerar uniformidade 0111 ou 01111
+	uint64_t pool_acumulador = 0; // será usado para armazenar bits restantes quando remover x bits dos bytes conforme o tamanho do universo
+	int bits_disponiveis = 0;  // para informar se tem bits na pool 
+	size_t pos_buff = 0;  // indice do buufer poderia também chamar i_buff
+	char senha[SENHA_MAX + 1]; // resultado final
+	size_t pos_senha = 0; // indice da senha 
 
 	while(pos_senha < (size_t)tamanho){
-    		while(bits_disponiveis < (int)bits){
+    		while(bits_disponiveis < (int)bits){ // tenho bits menores do que a potência de dois? 
         		if(pos_buff >= (size_t)bytes){
-            			break;
+				break;
         		}
 
-        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis);
+        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis); // recarrega a pool 
         		bits_disponiveis += 8;
         		pos_buff++;
+		
     		}
 
     	if(bits_disponiveis < (int)bits){
@@ -207,8 +209,8 @@ size_t bits_necessarios(size_t universo){
 		size_t bits= 0;
 		size_t valor= 1;
 
-		while(valor < universo){ 
-		valor <<= 1;
+		while(valor < universo){ // é menor que o universo? então 1 bit para valor, uma casa binaria
+		valor <<= 1; // caucula porência de 2
 		bits++; 
 		} 
 		return bits;
