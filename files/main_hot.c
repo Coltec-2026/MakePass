@@ -17,8 +17,8 @@ typedef struct {
 size_t calcular_forca(size_t N ,size_t x );
 size_t calcular_universo(Conjunto conjuntos[]);
 size_t bits_necessarios(size_t universo);
+double entropia_final();
 char obter_caractere(Conjunto conjuntos[],int qtd,size_t indice);
-
 /* Cada campo representa: 
  	nome -> descrição do conjunto;
 	caracteres -> string contendo os cadatcetes válidos
@@ -125,7 +125,7 @@ int main() {
 	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. 
 	
 	calcular_forca(universo, tamanho); // tamanho inserido pelo usuário
-
+	entropia_final(universo, tamanho); 
 //-----------------
 	uint64_t mascara = (1ULL << bits) - 1; // mascara recebe os bits, que são exatamente os que são necessários para medir o universo em bits
 	uint64_t pool_acumulador = 0; // será usado para armazenar bits restantes quando remover 2 bits dos bytes
@@ -213,4 +213,9 @@ size_t calcular_forca(size_t N ,size_t x )
 	printf("\nArea de busca possível: %zu^%zu.\n", N, x); 
 	
 	return 0; 
-} 
+}
+double entropia_final(size_t N, size_t x)
+{
+	double H = x * log2((double)N); 
+	printf("Entropia: %.3f bits\n", H);
+} 	
