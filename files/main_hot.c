@@ -14,10 +14,10 @@ typedef struct {
 } Conjunto;
 
 
-size_t calcular_forca(size_t N ,size_t x );
+void calcular_forca(size_t N ,size_t x );
 size_t calcular_universo(Conjunto conjuntos[]);
 size_t bits_necessarios(size_t universo);
-double entropia_final();
+void  entropia_final();
 char obter_caractere(Conjunto conjuntos[],int qtd,size_t indice);
 /* Cada campo representa: 
  	nome -> descrição do conjunto;
@@ -30,7 +30,7 @@ int main() {
 	// ----------- Declarações ---------------
 	int conjunto; 
 	int tamanho = 0; 
-	unsigned char buff[1028]; 
+	unsigned char buff[1028]; // representação em bits 
 
 	Conjunto conjuntos[] = { 
 		{ 	
@@ -163,6 +163,7 @@ int main() {
 	}
 
 	senha[pos_senha] = '\0';
+	printf("Gerados %zu de %d\n", pos_senha, tamanho); 
 	printf("\nSenha: %s\n", senha);
 
 	return 0;
@@ -204,18 +205,20 @@ size_t bits_necessarios(size_t universo){
 
         	indice-= conjuntos[i].tamanho;
     		}
-
+		
+		//printf("Indice=%zu Char=%d\n", valor, (unsigned char)letra);
     		return '?';
 	}
-size_t calcular_forca(size_t N ,size_t x )
+void calcular_forca(size_t N ,size_t x )
 { 	
 	// size_t area = (size_t)pow(N,x); Devido a magnitude dos números não é possível na maioria dos casos exibilos.
 	printf("\nArea de busca possível: %zu^%zu.\n", N, x); 
 	
-	return 0; 
+	return ; 
 }
-double entropia_final(size_t N, size_t x)
+void entropia_final(size_t N, size_t x)
 {
 	double H = x * log2((double)N); 
 	printf("Entropia: %.3f bits\n", H);
+	return;
 } 	
