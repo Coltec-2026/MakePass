@@ -125,73 +125,94 @@ int main() {
 	printf("\n"); 
 	*/	
 	
+	// ------- Variáveis para calculos importantes universo e bits
 	size_t universo = calcular_universo(conjuntos); // calcula a soma dos conjuntos para determinar o universo 
-	size_t bits = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. universo 10, é 4. 
+	size_t bits_por_amostra = bits_necessarios(universo); // Retorna a quantidade de casas binarias necessarias para percorrer o universo. universo 10, é 4. 
 	
+	// --------  teste de força
 	calcular_forca(universo, tamanho); // tamanho inserido pelo usuário
 	entropia_final(universo, tamanho); // a força de entropia estimada H
-//-----------------
-	uint64_t mascara = (1ULL << bits) - 1; // mascara recebe as casas de bits que são necessárias para gerar uniformidade 0111 ou 01111
-	uint64_t pool_acumulador = 0; // será usado para armazenar bits restantes quando remover x bits dos bytes conforme o tamanho do universo
+
+//----------------- Declarações para amostragem 
+	uint64_t mascara = (1ULL << bits_por_amostra) - 1; // mascara recebe as casas de bits que são necessárias para gerar uniformidade 0111 ou 01111
+	uint64_t reservatorio_amostras = 0; // será usado para armazenar bits restantes quando remover x bits dos bytes conforme o tamanho do universo
 	int bits_disponiveis = 0;  // para informar se tem bits na pool 
-	size_t pos_buff = 0;  // indice do buufer poderia também chamar i_buff
+	size_t i_buff = 0;  // indice do buufer poderia também chamar i_buff
 	char senha[SENHA_MAX + 1]; // resultado final
-	size_t pos_senha = 0; // indice da senha 
+	size_t i_senha = 0; // indice da senha 
 
-	while(pos_senha < (size_t)tamanho){
-    		while(bits_disponiveis < (int)bits){ // enquanto meus bits disponíveis forem menores do que os bits pegue mais.
-        		if(pos_buff >= (size_t)bytes){ // pode causar comportamento inesperado, deveria solicitar nova entropia?				
-				printf("buffer acabou"); 
-				break;
-        		}
+// --------- criação da senha
 
-        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis); // coloca a próxima caixa na posição igual ao número de caixas existentes na pool, OR garante a preservação acumulada. 
-        		bits_disponiveis += 8;// muda a posição de empilhamento
-        		pos_buff++; // avança no vetor de entropia. 
-		
-    		}
+	while(i_senha < (size_t)tamanho){
 
-    		if(bits_disponiveis < (int)bits){
+		// ------------ Inicio de amostragem 
+    		while(bits_disponiveis < (int)bits_por_amostra){ // enquanto meus bits disponíveis forem menores do que os bits pegue mais.
+        		if(i_buff >= (size_t)bytes){ // pode causar comportamento inesperado, deveria solicitar nova entropia?				
 			limpeza_segura(buff, bytes); 
 
 			fprintf(stderr, 
-				"Entropia insuficiente.\n"); 
+				"Buffer esgotado!.\n Tente novamente.\n"); 
         		exit(EXIT_FAILURE); 
+        		}
+
+        	// ------ empilhamento de bits
+			
+			reservatorio_amostras |= ((uint64_t)buff[i_buff] << bits_disponiveis); // coloca a próxima caixa na posição igual ao número de caixas existentes na pool, OR garante a preservação acumulada. 
+        		bits_disponiveis += 8;// muda a posição de empilhamento
+        		i_buff++; // avança no vetor de entropia. 
+		
     		}
 
-    		size_t valor = pool_acumulador & mascara; // valor sempre será substituido pelos digitos menos significantes da mascara marcados na mascara. 
+    			if(bits_disponiveis < (int)bits_por_amostra){
+				limpeza_segura(buff, bytes); 
 
-    		pool_acumulador >>= bits; // bits eliminados da pool
-    		bits_disponiveis -= bits; // bits disponíveis são deduzidos da quantidade que bits possui
+				fprintf(stderr, 
+					"Entropia insuficiente.\n"); 
+        			exit(EXIT_FAILURE); 
+    			}
 
-    		if(valor >= universo){// amostra de rejeição.
+		// Aplicação da amostragem
+
+    		size_t amostra  = reservatorio_amostras & mascara; // valor sempre será substituido pelos digitos menos significantes da mascara marcados na mascara. 
+
+    		reservatorio_amostras >>= bits_por_amostra; // bits eliminados da pool
+    		bits_disponiveis -= bits_por_amostra; // bits disponíveis são deduzidos da quantidade que bits possui
+
+		// Rejection Sampling, amostragem por rejeição 
+    		if(amostra  >= universo){// 
         	continue;
     		}
 
-    		char letra = obter_caractere(conjuntos,4,valor);
-    		senha[pos_senha++] = letra;
+		// Aplicação do caractere 
+
+    		char letra = obter_caractere(conjuntos,4,amostra);
+    		senha[i_senha++] = letra;
 		printf("%c", letra); // considerar apenas por motivos de visualização 
 	}
 
-	senha[pos_senha] = '\0';
+	senha[i_senha] = '\0';
+
+	// Resultados demonstrativos sem aplicação técnica 
 	printf("\n"); 
-	printf("Gerados %zu de %d\n", pos_senha, tamanho); // unicamente demonstrativo
-        printf("Bytes consumidos: %zu/%d\n", pos_buff,bytes); 	// ## ## 
+	printf("Gerados %zu de %d\n", i_senha, tamanho); // unicamente demonstrativo
+        printf("Bytes consumidos: %zu/%d\n", i_buff,bytes); 	// ## ## 
 	//printf("\nSenha: %s\n", senha); acaba possuindo falhas de reprodução por algum motivo
 
+
+	// limpeza de memória. 
 	for(int k= 0; k <= 2; k++)
 	{	
 		limpeza_segura(buff, bytes); 
 		limpeza_segura(senha, tamanho + 1); 
 
-		limpeza_segura(&pool_acumulador, sizeof(pool_acumulador)); 
+		limpeza_segura(&reservatorio_amostras, sizeof(reservatorio_amostras)); 
 		limpeza_segura(&mascara, sizeof(mascara)); 
 	} 
 	bits_disponiveis = 0;
-	pos_buff = 0;
-	pos_senha = 0;
+	i_buff = 0;
+	i_senha = 0;
 	universo = 0;
-	bits = 0;
+	bits_por_amostra = 0;
 
 	return 0;
 	} 
