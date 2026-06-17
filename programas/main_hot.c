@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <sys/types.h> 
+#include <stdlib.h> // exit faluire
 #define SENHA_MAX 128
 
 typedef struct { 
@@ -138,37 +139,41 @@ int main() {
 	size_t pos_senha = 0; // indice da senha 
 
 	while(pos_senha < (size_t)tamanho){
-    		while(bits_disponiveis < (int)bits){ // tenho bits menores do que a potência de dois? 
-        		if(pos_buff >= (size_t)bytes){
+    		while(bits_disponiveis < (int)bits){ // enquanto meus bits disponíveis forem menores do que os bits pegue mais.
+        		if(pos_buff >= (size_t)bytes){ // pode causar comportamento inesperado, deveria solicitar nova entropia?				
+				printf("buffer acabou"); 
 				break;
         		}
 
-        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis); // recarrega a pool 
-        		bits_disponiveis += 8;
-        		pos_buff++;
+        		pool_acumulador |= ((uint64_t)buff[pos_buff] << bits_disponiveis); // coloca a próxima caixa na posição igual ao número de caixas existentes na pool, OR garante a preservação acumulada. 
+        		bits_disponiveis += 8;// muda a posição de empilhamento
+        		pos_buff++; // avança no vetor de entropia. 
 		
     		}
 
-    	if(bits_disponiveis < (int)bits){
+    		if(bits_disponiveis < (int)bits){
         	break;
-    	}
+    		}
 
-    	size_t valor = pool_acumulador & mascara;
+    		size_t valor = pool_acumulador & mascara; // valor sempre será substituido pelos digitos menos significantes da mascara marcados na mascara. 
 
-    	pool_acumulador >>= bits;
-    	bits_disponiveis -= bits;
+    		pool_acumulador >>= bits; // bits eliminados da pool
+    		bits_disponiveis -= bits; // bits disponíveis são deduzidos da quantidade que bits possui
 
-    	if(valor >= universo){
-        continue;
-    	}
+    		if(valor >= universo){// amostra de rejeição.
+        	continue;
+    		}
 
     		char letra = obter_caractere(conjuntos,4,valor);
     		senha[pos_senha++] = letra;
+		printf("%c", letra); 
 	}
 
 	senha[pos_senha] = '\0';
-	printf("Gerados %zu de %d\n", pos_senha, tamanho); 
-	printf("\nSenha: %s\n", senha);
+	printf("\n"); 
+	printf("Gerados %zu de %d\n", pos_senha, tamanho);
+       printf("Bytes consumidos: %zu/%d\n", pos_buff,bytes); 	
+	//printf("\nSenha: %s\n", senha);
 	
 	limpeza_segura(&pool_acumulador, sizeof(pool_acumulador));
 	limpeza_segura(&mascara, sizeof(mascara));
@@ -215,22 +220,24 @@ size_t bits_necessarios(size_t universo){
 		} 
 		return bits;
 	} 
-	char obter_caractere(Conjunto conjuntos[],int qtd, size_t indice)
+char obter_caractere(Conjunto conjuntos[],int qtd, size_t indice) // struct conjunto, quantidade de structs, indice posicional após teste de rejeição. 
 	{
-    		for(int i = 0; i < qtd; i++){
+    		for(int i = 0; i < qtd; i++){// vasculha valores habilitados da struct
         		if(!conjuntos[i].habilitado){	
             		continue;
         	}
 
-        	if(indice < conjuntos[i].tamanho){
-            		return conjuntos[i].caracteres[indice];
+        	if(indice < conjuntos[i].tamanho){// se o indice for menor do que os conjuntos retorna valor válido
+            		return conjuntos[i].caracteres[indice]; 
 	       	}
 
-        	indice-= conjuntos[i].tamanho;
+        	indice-= conjuntos[i].tamanho; // se valido for maior do que o conjunto vasculhado, ele procura no próximo habilitado o número do indice. 
     		}
 		
-		//printf("Indice=%zu Char=%d\n", valor, (unsigned char)letra);
-    		return '?';
+		fprintf(stderr, 
+			"Erro interno: Indice=%zu\n não encontrado, tente novamente", indice) ;
+		exit(EXIT_FAILURE); 
+    		
 	}
 void calcular_forca(size_t N ,size_t x )
 { 	

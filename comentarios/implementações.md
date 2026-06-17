@@ -1,0 +1,10 @@
+- Adicionar manual para usuário na inicialização do programa, juntamente com uma arte ASCII com a logo ou nome do software. 
+-Colocar uma struct para gerenciar variaveis de manipulação de entropia e de senha
+- Adicionar mais conjuntos de caracteres
+- melhorar a lógica de reaproveitamento de bits se for mantida
+- adicionar compatibilidade com outros sistemas operacionais
+- Expandir a camada de abstração para capturar a própria entropia do hardware, dando suporte a dispositivos embarcados sem sistema operacional. 
+- Passar a conversão de caracteres gerada por uma função de SHA 512
+- escrever uma implementação para o bip 39 gerando minemonicos para além de entropia forte, ser facilmente recuperavel. 
+- incluir o bip 85 para que os caminhos de derivação do bip 32 faça com que todas as senhas sejam matematicamente recuperáveis atravez de uma lista de 24 palavras(minemonicos)  e uma formula matemática determinando a posição das senhas na arvore deterministica. 
+- Após a integração com dispositivo IOT, utilização autenticação de diffie-Hellerman por qr code para o dispositivo offline. 
