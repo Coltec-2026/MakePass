@@ -152,7 +152,11 @@ int main() {
     		}
 
     		if(bits_disponiveis < (int)bits){
-        	break;
+			limpeza_segura(buff, bytes); 
+
+			fprintf(stderr, 
+				"Entropia insuficiente.\n"); 
+        		exit(EXIT_FAILURE); 
     		}
 
     		size_t valor = pool_acumulador & mascara; // valor sempre será substituido pelos digitos menos significantes da mascara marcados na mascara. 
@@ -166,19 +170,23 @@ int main() {
 
     		char letra = obter_caractere(conjuntos,4,valor);
     		senha[pos_senha++] = letra;
-		printf("%c", letra); 
+		printf("%c", letra); // considerar apenas por motivos de visualização 
 	}
 
 	senha[pos_senha] = '\0';
 	printf("\n"); 
-	printf("Gerados %zu de %d\n", pos_senha, tamanho);
-       printf("Bytes consumidos: %zu/%d\n", pos_buff,bytes); 	
-	//printf("\nSenha: %s\n", senha);
-	
-	limpeza_segura(&pool_acumulador, sizeof(pool_acumulador));
-	limpeza_segura(&mascara, sizeof(mascara));
-	
-	pool_acumulador = 0;
+	printf("Gerados %zu de %d\n", pos_senha, tamanho); // unicamente demonstrativo
+        printf("Bytes consumidos: %zu/%d\n", pos_buff,bytes); 	// ## ## 
+	//printf("\nSenha: %s\n", senha); acaba possuindo falhas de reprodução por algum motivo
+
+	for(int k= 0; k <= 2; k++)
+	{	
+		limpeza_segura(buff, bytes); 
+		limpeza_segura(senha, tamanho + 1); 
+
+		limpeza_segura(&pool_acumulador, sizeof(pool_acumulador)); 
+		limpeza_segura(&mascara, sizeof(mascara)); 
+	} 
 	bits_disponiveis = 0;
 	pos_buff = 0;
 	pos_senha = 0;
@@ -189,12 +197,12 @@ int main() {
 	} 
 // -------- Fim da main -------	
 
-void limpeza_segura(void *ptr, size_t tamanho)
+void limpeza_segura(void *ponteiro, size_t tamanho)// void para ponteiro genérico aumentando reaproveitamento
 {
-    volatile unsigned char *p = ptr;
+    volatile unsigned char *p = ponteiro;
 
     while (tamanho--) {
-        *p++ = 0;
+        *p++ = 0; // consumindo bytes sobrescrevendo com zero
     }
 }
 
@@ -235,7 +243,7 @@ char obter_caractere(Conjunto conjuntos[],int qtd, size_t indice) // struct conj
     		}
 		
 		fprintf(stderr, 
-			"Erro interno: Indice=%zu\n não encontrado, tente novamente", indice) ;
+			"Erro interno: Indice=%zu não encontrado.\n Tente novamente!", indice) ;
 		exit(EXIT_FAILURE); 
     		
 	}
